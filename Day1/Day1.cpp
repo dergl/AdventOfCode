@@ -13,7 +13,7 @@ int get_number_of_lines ( std::string file_name )
     std::ifstream inFile;
     inFile.open(file_name);
     if (!inFile) {
-        std::cerr << "Unable to open file input.txt";
+        std::cerr << "Unable to open file: " << file_name << "\n";
         exit(1); // call system to stop
     }
 
@@ -26,17 +26,17 @@ int get_number_of_lines ( std::string file_name )
     return counter;
 }
 
-std::tuple<std::vector<int>, std::vector<int>> abc () 
+std::tuple<std::vector<int>, std::vector<int>> transform_input ( std::string fileName ) 
 {
     int x;
     std::ifstream inFile;
-    inFile.open("input.txt");
+    inFile.open(fileName);
     if (!inFile) {
         std::cerr << "Unable to open file input.txt";
         exit(1); // call system to stop
     }
 
-    int no_lines = get_number_of_lines("input.txt");
+    int no_lines = get_number_of_lines(fileName);
     std::vector<int> list_1{ std::vector<int>(no_lines/2) };
     std::vector<int> list_2{ std::vector<int>(no_lines/2) };
 
@@ -60,36 +60,30 @@ std::tuple<std::vector<int>, std::vector<int>> abc ()
 
     inFile.close();
 
-    // std::cout << "lines: " << counter << std::endl;
-    // inFile.
     return { list_1, list_2};
 } 
 
 
 
 int main() {
-    // std::cout << "Hello, World!" << std::endl;
-
-    std::tuple<std::vector<int>, std::vector<int>> lists = abc();
+    std::string fileName= "input.txt";
+    std::tuple<std::vector<int>, std::vector<int>> lists = transform_input( fileName );
     std::vector<int> list_1{ std::get<0>(lists) };
     std::vector<int> list_2{ std::get<1>(lists) };
     
-    // std::cout << "list_1: ";
-    // for ( auto i : list_1 )
-    // {
-    //     std::cout << i << " ";
-    // }
     std::sort(list_1.begin(), list_1.end());
     std::sort(list_2.begin(), list_2.end());
 
+
     std::vector<int> list_difference;
-    std::set_difference(list_1.begin(), list_1.end(), list_2.begin(), list_2.end(), std::back_inserter(list_difference));
+    for ( int i = 0; i < list_1.size(); i++ )
+    {
+        list_difference.push_back( abs(list_1[i] - list_2[i]) );
+    }
+    
+    int diff;
+    diff = std::accumulate(list_difference.begin(), list_difference.end(), 0);
 
-    // for ( auto i : list_difference )
-    // {
-    //     std::cout << i << " ";
-    // }
-
-    std::cout << std::endl << std::accumulate(list_difference.begin(), list_difference.end(), 0) << std::endl;
+    std::cout << "Final difference: " << diff << std::endl;
     return 0;
 }
