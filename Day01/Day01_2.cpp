@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <numeric>
 
-int get_number_of_lines ( std::string file_name )
+int const get_number_of_lines ( const std::string& file_name )
 {
     int counter{ 0 };
     std::string x;
@@ -26,7 +26,7 @@ int get_number_of_lines ( std::string file_name )
     return counter;
 }
 
-std::tuple<std::vector<int>, std::vector<int>> transform_input ( std::string fileName ) 
+std::tuple<std::vector<int>, std::vector<int>> transform_input ( const std::string& fileName ) 
 {
     int x;
     std::ifstream inFile;
@@ -63,10 +63,36 @@ std::tuple<std::vector<int>, std::vector<int>> transform_input ( std::string fil
     return { list_1, list_2};
 } 
 
+int const compute_total_distance ( const std::vector<int>& list_1, const std::vector<int>& list_2 )
+{
+    int total_distance{ 0 };
+    for ( int i = 0; i < list_1.size(); i++ )
+    {
+        total_distance += abs(list_1[i] - list_2[i]);
+    }
+    return total_distance;
+}
 
+int const compute_similarity_score  ( const std::vector<int>& list_1, const std::vector<int>& list_2 )
+{
+    int score{ 0 };
+
+    // Option 1: Using a for loop
+    for ( int i = 0; i < list_1.size(); i++ )
+    {
+        score += list_1[i] * std::count(list_2.begin(), list_2.end(), list_1[i]);
+    }
+
+    // Option 2: Using std::accumulate
+    score = std::accumulate(list_1.begin(), list_1.end(), 0, [&list_2](int s, int x){ return s + x * std::count(list_2.begin(), list_2.end(), x); });
+
+    return score;
+}
 
 int main() {
     std::string fileName= "input.txt";
+    // std::string fileName= "test_input.txt";
+    
     std::tuple<std::vector<int>, std::vector<int>> lists = transform_input( fileName );
     std::vector<int> list_1{ std::get<0>(lists) };
     std::vector<int> list_2{ std::get<1>(lists) };
@@ -74,16 +100,7 @@ int main() {
     std::sort(list_1.begin(), list_1.end());
     std::sort(list_2.begin(), list_2.end());
 
-
-    std::vector<int> list_difference;
-    for ( int i = 0; i < list_1.size(); i++ )
-    {
-        list_difference.push_back( abs(list_1[i] - list_2[i]) );
-    }
-    
-    int diff;
-    diff = std::accumulate(list_difference.begin(), list_difference.end(), 0);
-
-    std::cout << "Final difference: " << diff << std::endl;
+    std::cout << "Total distance: " << compute_total_distance(list_1, list_2) << std::endl;
+    std::cout << "Similarity score: " << compute_similarity_score(list_1, list_2) << std::endl;
     return 0;
 }
