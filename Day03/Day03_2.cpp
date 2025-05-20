@@ -7,6 +7,49 @@
 #include <boost/algorithm/string.hpp>
 #include <algorithm>
 
+bool do_or_dont( std::string str, bool do_ )
+{
+    auto haystack = boost::make_iterator_range( str );
+
+    auto last_do{ str.rfind( "do()" , str.size()) };
+    auto last_dont{ str.rfind( "don't()", str.size()) };
+    // auto last_dont{ boost::algorithm::find_last( haystack, "don't()" ) };
+
+    // No 'do' or 'dont' in the string -> leave boolean unchanged
+    if ( last_do == std::string::npos && last_dont == std::string::npos )
+    {
+        std::cout << "no do, no dont\n";
+        return do_;
+    }
+
+    // No 'do', but at least one 'dont' in the string
+    if ( last_do == std::string::npos && last_dont != std::string::npos )
+    {
+        std::cout << "no do, one dont\n";
+        return false;
+    }
+
+    // No 'dont', but at least one 'do' in the string
+    else if ( last_do != std::string::npos && last_dont == std::string::npos )
+    {
+        std::cout << "one do, no dont\n";
+        return true;
+    }
+
+    // Both 'do' and 'dont' in the string
+    // Check which one is the last one
+    std::cout << "do and dont\n";
+    if ( last_do > last_dont )
+    {
+        return true;
+    }
+    else
+    {
+        std::cout << "last_dont: " << last_dont << std::endl;
+        return false;
+    }
+}
+
 std::string input_to_single_string( std::string const& fileName )
 {
     std::string input{};
@@ -18,17 +61,26 @@ std::string input_to_single_string( std::string const& fileName )
     return input;
 }
 
-std::vector<std::string> split_string_at_mul( std::string const& str )
+std::vector<std::string> split_string_at_mul( std::string const& str, bool& do_ )
 {
     std::vector<std::string> result;
     std::string delimiter{ "mul(" };
 
     auto first{ str.find( delimiter ) };
-    auto last{ str.find_last_of( delimiter ) - (delimiter.size()-1) };
+    auto last{ str.rfind( delimiter ) - (delimiter.size()-1) };
 
-    while ( first <= last )
+    // Check whether the string has a do/dont before the first mul(
+    do_ = do_or_dont( str.substr( 0, first ), do_ );
+
+    // Sorting the strings of the form 'mul(....' into the vector
+    while ( first < str.size()-1 )
     {
         auto next{ str.find( delimiter, first + 1 ) };
+        if ( next == std::string::npos )
+        {
+            std::cout << "WARNUNGNGGG\n\n";
+            next = str.size();
+        }
         result.push_back( str.substr( first, next - first ) );
         first = next;
     }
@@ -38,7 +90,9 @@ std::vector<std::string> split_string_at_mul( std::string const& str )
 
 bool is_form_valid( std::string const& str )
 {
-    std::cout << str << std::endl;
+    // Print string for debugging
+    // std::cout << str << std::endl;
+
     // Needs at least 8 characters to be valid: mul(a,b)
     if ( str.size() < 8 ) return false;
     
@@ -99,13 +153,18 @@ int main()
     std::string fileName{ "input.txt" };
     std::string input{ input_to_single_string(fileName) };
     
+    bool do_{ true };
     // std::cout << "Input: " << input << std::endl;
-    std::vector<std::string> split_input{ split_string_at_mul(input) };
+    std::vector<std::string> split_input{ split_string_at_mul(input, do_) };
     
+
+
     int sum{ 0 };
+    std::cout << do_ << std::endl;
     for (auto const& s : split_input)
     {
-        if ( is_form_valid(s) )
+        std::cout << "string: " << s << std::endl;
+        if ( is_form_valid(s) && do_ )
         {
             std::vector<std::string> args{ get_arguments(s) };
             if ( is_valid_argument( args ) )
@@ -114,7 +173,10 @@ int main()
                 sum += args_int[0] * args_int[1];
             }
         }
+        do_ = do_or_dont( s, do_ );
+        std::cout << do_ << std::endl;
     }
     std::cout << "Sum: " << sum << std::endl;
-    return 0;
+    // std::cout << "test for mul(5,5)+: " << do_or_dont( "mul(5,5)+", true ) << std::endl; 
+    return EXIT_SUCCESS;
 }
