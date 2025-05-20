@@ -9,43 +9,35 @@
 
 bool do_or_dont( std::string str, bool do_ )
 {
-    auto haystack = boost::make_iterator_range( str );
-
     auto last_do{ str.rfind( "do()" , str.size()) };
     auto last_dont{ str.rfind( "don't()", str.size()) };
-    // auto last_dont{ boost::algorithm::find_last( haystack, "don't()" ) };
-
+    
     // No 'do' or 'dont' in the string -> leave boolean unchanged
     if ( last_do == std::string::npos && last_dont == std::string::npos )
     {
-        std::cout << "no do, no dont\n";
         return do_;
     }
 
     // No 'do', but at least one 'dont' in the string
     if ( last_do == std::string::npos && last_dont != std::string::npos )
     {
-        std::cout << "no do, one dont\n";
         return false;
     }
 
     // No 'dont', but at least one 'do' in the string
     else if ( last_do != std::string::npos && last_dont == std::string::npos )
     {
-        std::cout << "one do, no dont\n";
         return true;
     }
 
     // Both 'do' and 'dont' in the string
     // Check which one is the last one
-    std::cout << "do and dont\n";
     if ( last_do > last_dont )
     {
         return true;
     }
     else
     {
-        std::cout << "last_dont: " << last_dont << std::endl;
         return false;
     }
 }
@@ -78,7 +70,6 @@ std::vector<std::string> split_string_at_mul( std::string const& str, bool& do_ 
         auto next{ str.find( delimiter, first + 1 ) };
         if ( next == std::string::npos )
         {
-            std::cout << "WARNUNGNGGG\n\n";
             next = str.size();
         }
         result.push_back( str.substr( first, next - first ) );
@@ -154,10 +145,7 @@ int main()
     std::string input{ input_to_single_string(fileName) };
     
     bool do_{ true };
-    // std::cout << "Input: " << input << std::endl;
     std::vector<std::string> split_input{ split_string_at_mul(input, do_) };
-    
-
 
     int sum{ 0 };
     std::cout << do_ << std::endl;
@@ -176,7 +164,7 @@ int main()
         do_ = do_or_dont( s, do_ );
         std::cout << do_ << std::endl;
     }
+    
     std::cout << "Sum: " << sum << std::endl;
-    // std::cout << "test for mul(5,5)+: " << do_or_dont( "mul(5,5)+", true ) << std::endl; 
     return EXIT_SUCCESS;
 }
