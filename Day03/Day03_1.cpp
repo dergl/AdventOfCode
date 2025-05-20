@@ -13,7 +13,6 @@ std::string input_to_single_string( std::string const& fileName )
     std::ifstream inFile{ fileName };
     for( std::string line; std::getline( inFile, line ); )
     {
-        // std::cout << "\n    !!New line!!    \n";
         input += line;
     }
     return input;
@@ -33,12 +32,7 @@ std::vector<std::string> split_string_at_mul( std::string const& str )
         result.push_back( str.substr( first, next - first ) );
         first = next;
     }
-    // result.push_back( str.substr( last, str.size()-1 ) );
 
-    // for ( auto const& s : result )
-    // {
-    //     std::cout << "substring: " << s << std::endl;
-    // }
     return result;
 }
 
@@ -59,12 +53,7 @@ bool is_form_valid( std::string const& str )
     std::string substr_b{ str.substr( comma+1, parenthesis - (comma+1) ) };
     
     if ( substr_a.empty() || substr_b.empty() ) return false;
-    // std::cout << substr_a << "," << substr_b << std::endl;
-    // Remove the leading 'mul(' and the ')' at the end
-    // if ( str[str.size()-1] != ')' ) return false;
-    // std::string substr{ str.substr( 4, (str.size()-1) - 1 ) };
-
-    // std::cout << substr << std::endl;
+    
     return true;
 }
 
@@ -87,7 +76,6 @@ bool is_valid_argument( std::vector<std::string> const& str )
         // Check whether the string is a number
         if ( !std::all_of( s.begin(), s.end(), ::isdigit ) )
         {
-            // std::cout << "Invalid argument: " << s << std::endl;
             return false;
         }
     }
@@ -108,7 +96,7 @@ std::vector<int> args_to_int( std::vector<std::string> const& str )
 
 int main() 
 {
-    std::string fileName{ "test_input.txt" };
+    std::string fileName{ "input.txt" };
     std::string input{ input_to_single_string(fileName) };
     
     // std::cout << "Input: " << input << std::endl;
