@@ -30,7 +30,7 @@ int check_horizontal( std::vector<std::vector<char>> arr )
     size_t n{ arr.size() };
     for ( int i = 0; i < n; i++ )
     {
-        for ( int j = 0; j < n-4; j++)
+        for ( int j = 0; j < n-3; j++)
         {
             std::string str{};
             str.push_back( arr[i][j] );
@@ -52,7 +52,7 @@ int check_vertical( std::vector<std::vector<char>> arr )
 {
     int counter{ 0 };
     size_t n{ arr.size() };
-    for ( int i = 0; i < n-4; i++ )
+    for ( int i = 0; i < n-3; i++ )
     {
         for ( int j = 0; j < n; j++)
         {
@@ -70,23 +70,65 @@ int check_vertical( std::vector<std::vector<char>> arr )
     return counter;
 }
 
+int check_top_left_to_down_right( std::vector<std::vector<char>> arr )
+{
+    int counter{ 0 };
+    size_t n{ arr.size() };
+    for ( int i = 0; i < n-3; i++ )
+    {
+        for ( int j = 0; j < n-3; j++)
+        {
+            std::string str{};
+            str.push_back( arr[i][j] );
+            str.push_back( arr[i+1][j+1] );
+            str.push_back( arr[i+2][j+2] );
+            str.push_back( arr[i+3][j+3] );
+            if ( str == "XMAS" || str == "SAMX" )
+            {
+                counter++;
+            }
+        }
+    }
+    return counter;
+}
+
+int check_down_left_to_top_right( std::vector<std::vector<char>> arr )
+{
+    int counter{ 0 };
+    size_t n{ arr.size() };
+    for ( int i = 3; i < n; i++ )
+    {
+        for ( int j = 0; j < n-3; j++)
+        {
+            std::string str{};
+            str.push_back( arr[i][j] );
+            str.push_back( arr[i-1][j+1] );
+            str.push_back( arr[i-2][j+2] );
+            str.push_back( arr[i-3][j+3] );
+            if ( str == "XMAS" || str == "SAMX" )
+            {
+                counter++;
+            }
+        }
+    }
+    return counter;
+}
 
 int main() 
 {
-    std::string fileName{ "test_input.txt" };
+    std::string fileName{ "input.txt" };
     std::vector<std::vector<char>> input{ input_to_array(fileName) };
     
     int counter{ 0 };
     counter += check_horizontal( input );
-    // for( auto const& row : input )
-    // {
-    //     for( auto const& c : row )
-    //     {
-    //         std::cout << c;
-    //     }
-    //     std::cout << std::endl;
-    // }
+    counter += check_vertical( input );
+    counter += check_top_left_to_down_right( input );
+    counter += check_down_left_to_top_right( input );
     
-    std::cout << "Sum: " <<  std::endl;
+    // std::cout << "Horizontal: " << check_horizontal( input ) << std::endl;
+    // std::cout << "Vertical: " << check_vertical( input ) << std::endl;
+    // std::cout << "Top left to down right: " << check_top_left_to_down_right( input ) << std::endl;
+    // std::cout << "Down left to top right: " << check_down_left_to_top_right( input ) << std::endl;
+    std::cout << "Sum: " << counter <<  std::endl;
     return EXIT_SUCCESS;
 }
