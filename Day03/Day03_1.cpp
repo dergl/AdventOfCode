@@ -27,13 +27,13 @@ std::vector<std::string> split_string_at_mul( std::string const& str )
     auto first{ str.find( delimiter ) };
     auto last{ str.find_last_of( delimiter ) - (delimiter.size()-1) };
 
-    while ( first < last )
+    while ( first <= last )
     {
         auto next{ str.find( delimiter, first + 1 ) };
         result.push_back( str.substr( first, next - first ) );
         first = next;
     }
-    result.push_back( str.substr( last, str.size()-1 ) );
+    // result.push_back( str.substr( last, str.size()-1 ) );
 
     // for ( auto const& s : result )
     // {
