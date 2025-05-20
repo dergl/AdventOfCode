@@ -14,7 +14,7 @@ class Report
 
     public:
         Report( std::vector<int> const& v );
-        bool is_data_safe();
+        bool is_data_safe( std::vector<int> data );
         bool is_damped_data_safe();
         friend std::ostream& operator<<( std::ostream& os, const Report& report );
 };
@@ -23,29 +23,39 @@ Report::Report( std::vector<int> const& v )
 : report_data{ v }
 {}
 
-bool Report::is_data_safe()
+bool Report::is_data_safe( std::vector<int> data )
 {
-    if( report_data.size() == 1)
+    if( data.size() == 1)
     {
         std::cout << "Data only contains one element!" << std::endl;
         return true;
     }
 
-    if( report_data[0] < report_data[1] )
+    if( data[0] < data[1] )
     {
-        return std::is_sorted( report_data.begin(), report_data.end(), 
+        return std::is_sorted( data.begin(), data.end(), 
                 [](int a, int b){ return (a <= b) || (a-b > 3); } );       
     }
     else
     {
-        return std::is_sorted(report_data.begin(), report_data.end(), 
+        return std::is_sorted( data.begin(), data.end(), 
                 [](int a, int b){ return (a >= b) || (b-a > 3); } );
     }
 }
 
 bool Report::is_damped_data_safe()
 {
-    // TODO: do check but with counting
+    if( is_data_safe( report_data ) ) return true;
+    
+    for( int i = 0; i < report_data.size(); i++ )
+    {
+        std::vector<int> data_copy{ report_data };
+        data_copy.erase( data_copy.begin() + i );
+        if ( is_data_safe( data_copy ) )
+        {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -93,8 +103,8 @@ int main()
     int counter{ 0 };
     for ( auto& report : reports )
     {
-        std::cout << report << ": ";
-        if( report.is_data_safe() )
+        // std::cout << report << ": ";
+        if( report.is_damped_data_safe() )
         {
             counter++;
             // std::cout << "safe" << std::endl;
