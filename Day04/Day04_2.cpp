@@ -8,7 +8,7 @@
 #include <algorithm>
 
 
-std::vector<std::vector<char>> input_to_array( std::string const& fileName )
+std::vector<std::vector<char>> const input_to_array( std::string const& fileName )
 {
     std::vector<std::vector<char>> arr{};
     std::ifstream inFile{ fileName };
@@ -24,8 +24,34 @@ std::vector<std::vector<char>> input_to_array( std::string const& fileName )
     return arr;
 }
 
+int check_X( std::vector<std::vector<char>> const& arr, int i, int j )
+{
+    // Check top left to down right
+    if ( (arr[i-1][j-1] == 'M' && arr[i+1][j+1] == 'S') || (arr[i-1][j-1] == 'S' && arr[i+1][j+1] == 'M') )
+        return 1;
 
+    // Check down left to top right
+    if ( (arr[i+1][j-1] == 'M' && arr[i-1][j+1] == 'S') || (arr[i+1][j-1] == 'S' && arr[i-1][j+1] == 'M') )
+        return 1;
+    return 0;
+}
 
+int check_X_MAS( std::vector<std::vector<char>> const& arr )
+{
+    int counter{ 0 };
+    size_t n{ arr.size() };
+    for ( int i = 1; i < n-1; i++ )
+    {
+        for ( int j = 1; j < n-1; j++)
+        {
+            if ( arr[i][j] == 'A' )
+            {
+                counter += check_X( arr, i, j );
+            }
+        }
+    }
+    return counter;
+}
 
 int main() 
 {
