@@ -26,14 +26,27 @@ std::vector<std::vector<char>> const input_to_array( std::string const& fileName
 
 int check_X( std::vector<std::vector<char>> const& arr, int i, int j )
 {
+    // bool X_possible{ true };
+    // int X_possible{ 1 };
     // Check top left to down right
-    if ( (arr[i-1][j-1] == 'M' && arr[i+1][j+1] == 'S') || (arr[i-1][j-1] == 'S' && arr[i+1][j+1] == 'M') )
-        return 1;
+    if ( (arr[i-1][j-1] != 'M' || arr[i+1][j+1] != 'S') && (arr[i-1][j-1] != 'S' || arr[i+1][j+1] != 'M') )
+    {
+        return 0;
+        // X_possible = 0;
+    }
+    // else
+    // {
+    //     X_possible = false;
+    // }
 
     // Check down left to top right
-    if ( (arr[i+1][j-1] == 'M' && arr[i-1][j+1] == 'S') || (arr[i+1][j-1] == 'S' && arr[i-1][j+1] == 'M') )
-        return 1;
-    return 0;
+    if ( (arr[i+1][j-1] != 'M' || arr[i-1][j+1] != 'S') && (arr[i+1][j-1] != 'S' || arr[i-1][j+1] != 'M') )
+    {
+        // X_possible = 0;
+        return 0;
+    }
+    // return X_possible;
+    return 1;
 }
 
 int check_X_MAS( std::vector<std::vector<char>> const& arr )
@@ -55,7 +68,7 @@ int check_X_MAS( std::vector<std::vector<char>> const& arr )
 
 int main() 
 {
-    std::string fileName{ "input.txt" };
+    std::string fileName{ "test_input.txt" };
     std::vector<std::vector<char>> input{ input_to_array(fileName) };
     
     int counter{ /* TODO */ };
